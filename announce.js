@@ -1,20 +1,9 @@
-import { Low } from "lowdb";
-import { JSONFile } from "lowdb/node";
-
-const adapter = new JSONFile("servers.json");
-const db = new Low(adapter);
-{
-    // Read data from JSON file
-    await db.read();
-
-    // If db.json doesn't exist, db.data will be null
-    db.data ||= { };
-}
-
 import express from "express";
 import { body, validationResult, matchedData } from "express-validator";
 
 const router = express.Router();
+
+const server_list = { };
 
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
@@ -43,36 +32,26 @@ router.post("/",
 
         const ip = req.ip, port = matched["port"];
 
-        db.data[ip] ||= { };
-        db.data[ip][port] = matched;
-
-        await db.write();
+        server_list[ip] ||= { };
+        server_list[ip][port] = matched;
 
         res.status(200).send({ status: "ok" }).end();
     }
 );
 
 setInterval(async () => {
-    const time = new Date().getTime();
-    const data = db.data;
-    
-    let update = false;
-    Object.keys(data).forEach((ip) => {
-        Object.keys(data[ip]).forEach((port) => {
-            if (time > db.data[ip][port]["timeout"])
+    const time = new Date().getTime();    
+    Object.keys(server_list).forEach((ip) => {
+        Object.keys(server_list[ip]).forEach((port) => {
+            if (time > server_list[ip][port]["timeout"])
             {
-                delete db.data[ip][port];
+                delete server_list[ip][port];
 
-                if (Object.keys(db.data[ip]).length == 0)
-                    delete db.data[ip];
-
-                update = true;
+                if (Object.keys(server_list[ip]).length == 0)
+                    delete server_list[ip];
             }
         });
     });
+}, 3000);
 
-    if (update)
-        await db.write(); 
-}, 3000,);
-
-export default { router };
+export default { router, server_list };
