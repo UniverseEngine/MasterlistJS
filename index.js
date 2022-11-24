@@ -8,6 +8,7 @@ import announce from "./announce.js";
 app.use("/announce", announce.router);
 
 app.use("/servers", async (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
     res.status(200).send(announce.server_list).end();
 });
 
