@@ -13,6 +13,7 @@ router.post("/",
     body("name").isString(),
     body("players").isNumeric(),
     body("max_players").isNumeric(),
+    body("passworded").isBoolean(),
     body("game").isNumeric().isLength({ min: 0, max: 1 }),
     body("player_list").isArray().isLength({ min: 0, max: 256 }),
     async (req, res) => {
@@ -26,6 +27,7 @@ router.post("/",
 
         matched["players"]     = parseInt(matched["players"]);
         matched["max_players"] = parseInt(matched["max_players"]);
+        matched["passworded"]  = matched["passworded"] == "true" ? true : false;
         matched["game"]        = parseInt(matched["game"]);
         matched["player_list"] = matched["player_list"].filter(e => typeof e == "string");
         matched["timeout"]     = new Date().getTime() + 3000;
