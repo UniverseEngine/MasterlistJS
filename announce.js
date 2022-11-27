@@ -14,6 +14,7 @@ router.post("/",
     body("players").isNumeric(),
     body("max_players").isNumeric(),
     body("passworded").isBoolean(),
+    body("gamemode").isString(),
     body("game").isNumeric().isLength({ min: 0, max: 1 }),
     body("player_list").isArray().isLength({ min: 0, max: 256 }),
     async (req, res) => {
