@@ -16,6 +16,7 @@ router.post("/",
     body("passworded").isBoolean(),
     body("gamemode").isString(),
     body("game").isNumeric().isLength({ min: 0, max: 1 }),
+    body("version").isString().isLength({ min: 0, max: 128 }),
     body("player_list").isArray().isLength({ min: 0, max: 256 }),
     async (req, res) => {
         const errors = validationResult(req);
