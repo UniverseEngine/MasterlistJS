@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import express from "express";
 const app = express();
 
@@ -17,6 +18,27 @@ app.use("/servers", async (req, res) => {
                 ip: ip,
                 port: port,
                 ...announce.server_list[ip][port]
+            });
+        });
+    });
+
+    res.status(200).send(list).end();
+});
+
+app.use("/official", async (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+
+    const officialList = JSON.parse(fs.readFileSync("official.json", { encoding: "utf-8" }));
+
+    const obj = Object.fromEntries(Object.entries(announce.server_list).filter(([k, v]) => officialList.includes(k)));
+
+    const list = [];
+    Object.keys(obj).forEach(ip => {
+        Object.keys(obj[ip]).forEach(port => {
+            list.push({
+                ip: ip,
+                port: port,
+                ...obj[ip][port]
             });
         });
     });
