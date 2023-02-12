@@ -34,7 +34,7 @@ router.post("/",
         matched["player_list"] = matched["player_list"].filter(e => typeof e == "string");
         matched["timeout"]     = new Date().getTime() + 3000;
 
-        const ip = req.ip, port = matched["port"];
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress, port = matched["port"];
 
         server_list[ip] ||= { };
         server_list[ip][port] = matched;
