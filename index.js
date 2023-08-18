@@ -46,6 +46,11 @@ app.use("/official", async (req, res) => {
     res.status(200).send(list).end();
 });
 
+// Handle any other requests to the server, returning a custom 404 page
+app.use(async (req, res) => {
+    res.status(404).send("404 Not Found").end();
+});
+
 app.listen(port, "0.0.0.0", () => {
     console.log(`Server running on port ${port}`);
 });
